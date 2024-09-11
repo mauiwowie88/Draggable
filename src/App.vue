@@ -21,6 +21,24 @@
         </div>
       </template>
     </draggable>
+
+    <!-- Input to move selected item by index -->
+    <div v-if="selectedItem">
+      <p>
+        Selected skill:
+        <strong>{{ selectedItem.name }}</strong>
+      </p>
+      <label for="newIndex">Move to position:</label>
+      <input
+        type="number"
+        id="newIndex"
+        v-model.number="newIndex"
+        min="1"
+        :max="skills.length"
+      />
+      <button @click="moveToIndex">Move</button>
+      <button @click="clearSelection">Cancel</button>
+    </div>
   </div>
 </template>
 
@@ -44,6 +62,7 @@ const skills = ref([
 
 // Track the selected item for swapping
 const selectedItem = ref(null);
+const newIndex = ref(null);
 
 // Handle click event to swap items
 const handleClick = (element) => {
@@ -63,7 +82,32 @@ const handleClick = (element) => {
 
     // Clear selection after the swap
     selectedItem.value = null;
+    newIndex.value = null;
   }
+};
+
+// Function to move the selected item to a new index based on user input
+const moveToIndex = () => {
+  if (selectedItem.value && newIndex.value !== null) {
+    const currentIndex = skills.value.indexOf(selectedItem.value);
+    const targetIndex = newIndex.value - 1; // Adjust for 0-based index
+
+    if (targetIndex >= 0 && targetIndex < skills.value.length) {
+      // Move the selected item to the new index
+      skills.value.splice(currentIndex, 1);
+      skills.value.splice(targetIndex, 0, selectedItem.value);
+    }
+
+    // Clear selection after the move
+    selectedItem.value = null;
+    newIndex.value = null;
+  }
+};
+
+// Function to clear the selection
+const clearSelection = () => {
+  selectedItem.value = null;
+  newIndex.value = null;
 };
 
 // Handle the drag end event (optional)
@@ -93,5 +137,11 @@ const onEnd = () => {
 
 .selected {
   background-color: yellow; /* Highlight the selected item */
+}
+
+input {
+  margin: 10px 0;
+  padding: 5px;
+  width: 50px;
 }
 </style>
