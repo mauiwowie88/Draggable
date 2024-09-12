@@ -1,5 +1,4 @@
-// src/data/skillsData.js
-export const skills = [
+export const list = [
   { id: 1, name: "JavaScript" },
   { id: 2, name: "Vue.js" },
   { id: 3, name: "CSS" },
