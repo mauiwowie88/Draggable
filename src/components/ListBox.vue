@@ -1,16 +1,10 @@
 <template>
-  <div>
-    <div>
-      <input
-        v-model="newItemName"
-        placeholder="Add Item"
-        @keydown.enter="addItem"
-      />
-      <button @click="addItem">+</button>
+  <section>
+    <div v-if="!skills.length">
+      <p>No items available. Add a new item to get started.</p>
     </div>
 
-    <!-- Check if there are skills, else show a message -->
-    <div v-if="skills.length">
+    <div v-else>
       <draggable
         v-model="skills"
         ghost-class="ghost"
@@ -22,7 +16,7 @@
             v-if="element && element.name"
             class="item"
             :class="{ selected: selectedItem === element }"
-            @click="handleClick(element, index)"
+            @click="handleClick(element)"
           >
             <strong>{{ index + 1 }}. {{ element.name }}</strong>
 
@@ -40,36 +34,39 @@
                 ref="newIndexInput"
               />
               <button @click.stop="moveToIndex">Move</button>
-              <button @click.stop="clearSelection">Cancel</button>
+              <button @click.stop="clearSelection(selectedItem)">Cancel</button>
             </div>
             <button @click.stop="deleteItem(index)">Delete</button>
           </div>
         </template>
       </draggable>
     </div>
-
-    <div v-else>
-      <p>No items available. Add a new item to get started.</p>
+    <div>
+      <input
+        v-model="newItemName"
+        placeholder="Add Item"
+        @keydown.enter="addItem"
+        class="item-input"
+      />
+      <button @click="addItem">+</button>
     </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
 import { ref, watch, nextTick } from "vue";
 import draggable from "vuedraggable";
 
-// Initialize skills array, filter out null or undefined items
 const skills = ref(
   (JSON.parse(localStorage.getItem("skills")) || []).filter(
     (skill) => skill && skill.name
   )
 );
 const selectedItem = ref(null);
-const newIndex = ref(1);
 const newItemName = ref("");
+const newIndex = ref(1);
 const newIndexInput = ref(null);
 
-// Watch and save to localStorage whenever the skills array is updated
 watch(
   skills,
   (newSkills) => {
@@ -79,30 +76,17 @@ watch(
 );
 
 const handleClick = async (element) => {
-  if (!selectedItem.value) {
-    selectedItem.value = element;
-  } else if (selectedItem.value === element) {
+  if (selectedItem.value === element) {
     selectedItem.value = null;
   } else {
-    const firstIndex = skills.value.indexOf(selectedItem.value);
-    const secondIndex = skills.value.indexOf(element);
-
-    // Swap items
-    if (firstIndex !== -1 && secondIndex !== -1) {
-      [skills.value[firstIndex], skills.value[secondIndex]] = [
-        skills.value[secondIndex],
-        skills.value[firstIndex],
-      ];
-    }
-    selectedItem.value = null;
+    selectedItem.value = element;
     newIndex.value = 1;
-  }
 
-  // Auto-focus and highlight input when item is selected
-  await nextTick();
-  if (newIndexInput.value) {
-    newIndexInput.value.focus();
-    newIndexInput.value.select(); // Auto-highlight input
+    await nextTick();
+    if (newIndexInput.value) {
+      newIndexInput.value.focus();
+      newIndexInput.value.select();
+    }
   }
 };
 
@@ -121,7 +105,7 @@ const moveToIndex = async () => {
     await nextTick();
     if (newIndexInput.value) {
       newIndexInput.value.focus();
-      newIndexInput.value.select(); // Auto-highlight input again after move
+      newIndexInput.value.select();
     }
   }
 };
@@ -151,9 +135,11 @@ const addItem = () => {
     return;
   }
   const newItem = {
-    id: Date.now(), // Use timestamp for unique id
+    id: Date.now(),
     name: newItemName.value,
   };
+
+  console.log(newItem);
 
   skills.value.push(newItem);
   newItemName.value = "";
@@ -161,19 +147,12 @@ const addItem = () => {
   localStorage.setItem("skills", JSON.stringify(skills.value));
 };
 
-const clearSelection = async () => {
+const clearSelection = () => {
   selectedItem.value = null;
-  newIndex.value = 1;
-
-  await nextTick();
-  if (newIndexInput.value) {
-    newIndexInput.value.focus();
-    newIndexInput.value.select(); // Ensure input is cleared and selected
-  }
 };
 
 const onEnd = () => {
-  console.log("Drag operation completed", skills.value); // Add a log for debugging
+  console.log("Drag operation completed");
 };
 </script>
 
@@ -187,8 +166,11 @@ const onEnd = () => {
   margin-bottom: 5px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  height: 20px;
   cursor: pointer;
+}
+
+.item-input {
+  margin: 0;
 }
 
 .selected {
