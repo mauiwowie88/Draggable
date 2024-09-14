@@ -1,7 +1,8 @@
 <template>
   <section>
+    <div></div>
     <div v-if="!skills.length">
-      <p>No items available. Add a new item to get started.</p>
+      <p>No items available! Add a new item to get started.</p>
     </div>
 
     <div v-else>
