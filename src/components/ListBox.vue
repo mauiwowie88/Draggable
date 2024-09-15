@@ -1,47 +1,80 @@
 <template>
   <section>
-    <div></div>
-    <div v-if="!skills.length">
+    <el-row id="btn-box">
+      <el-col :span="16">
+        <el-button
+          size="large"
+          round
+          class="light btn"
+          @click="fetchProducts('https://fakestoreapi.com/products')"
+        >
+          Active
+        </el-button>
+        <el-button size="large" round class="light btn">Inactive</el-button>
+      </el-col>
+      <el-col :span="8" class="dark-btn-box">
+        <el-button size="large" round class="dark btn">
+          Create playlist
+        </el-button>
+      </el-col>
+    </el-row>
+
+    <div v-if="!products.length">
       <p>No items available! Add a new item to get started.</p>
     </div>
 
-    <div v-else>
-      <draggable
-        v-model="skills"
-        ghost-class="ghost"
-        @end="onEnd"
-        :itemKey="'id'"
-      >
+    <div
+      v-infinite-scroll="loadMoreSkills"
+      infinite-scroll-disabled="loading"
+      infinite-scroll-distance="10"
+      style="overflow-y: auto; max-height: 400px"
+    >
+      <draggable v-model="products" ghost-class="ghost" :itemKey="'id'">
         <template #item="{ element, index }">
           <div
             v-if="element && element.name"
             class="item"
-            :class="{ selected: selectedItem === element }"
-            @click="handleClick(element)"
+            :class="{
+              selected: selectedItem === element && !showControlForItem,
+            }"
+            @click="handleItemClick(element)"
           >
-            <strong>{{ index + 1 }}. {{ element.name }}</strong>
-
-            <div v-if="selectedItem === element" style="margin-left: auto">
+            <img :src="element.image" alt="product image" width="100" />
+            {{ element.name }}
+            <div
+              v-if="showControlForItem === element"
+              style="margin-left: auto"
+            >
               <label for="newIndex">Move to position:</label>
               <input
                 type="number"
                 id="newIndex"
                 v-model.number="newIndex"
                 min="1"
-                :max="skills.length"
+                :max="products.length"
                 @click.stop
                 placeholder="1"
                 @keydown.enter="moveToIndex"
                 ref="newIndexInput"
               />
-              <button @click.stop="moveToIndex">Move</button>
-              <button @click.stop="clearSelection(selectedItem)">Cancel</button>
+              <el-button round @click.stop="moveToIndex">Move</el-button>
+              <el-button round @click.stop="clearSelection">Cancel</el-button>
+              <el-button round @click.stop="deleteItem(index)">
+                Delete
+              </el-button>
             </div>
-            <button @click.stop="deleteItem(index)">Delete</button>
+            <div @click.stop="handleIconClick(element)">
+              <img
+                src="/images/dot3.png"
+                alt="Menu drop down icon."
+                id="icon"
+              />
+            </div>
           </div>
         </template>
       </draggable>
     </div>
+
     <div>
       <input
         v-model="newItemName"
@@ -58,28 +91,74 @@
 import { ref, watch, nextTick } from "vue";
 import draggable from "vuedraggable";
 
-const skills = ref(
-  (JSON.parse(localStorage.getItem("skills")) || []).filter(
-    (skill) => skill && skill.name
-  )
-);
+const products = ref([]);
 const selectedItem = ref(null);
+const showControlForItem = ref(null);
 const newItemName = ref("");
 const newIndex = ref(1);
 const newIndexInput = ref(null);
+const loading = ref(false);
 
 watch(
-  skills,
-  (newSkills) => {
-    localStorage.setItem("skills", JSON.stringify(newSkills));
+  products,
+  (newProducts) => {
+    localStorage.setItem("products", JSON.stringify(newProducts));
   },
   { deep: true }
 );
 
-const handleClick = async (element) => {
-  if (selectedItem.value === element) {
+async function fetchProducts(url) {
+  try {
+    let data = await fetch(url);
+    let res = await data.json();
+
+    const productsList = res.map((product) => ({
+      name: product.title,
+      image: product.image,
+    }));
+
+    products.value = productsList;
+    localStorage.setItem("products", JSON.stringify(productsList));
+    loadProductsFromLocalStorage();
+  } catch (error) {
+    console.error("Error fetching products:", error);
+  }
+}
+
+function loadProductsFromLocalStorage() {
+  const storedProducts = localStorage.getItem("products");
+  if (storedProducts) {
+    products.value = JSON.parse(storedProducts);
+  } else {
+    console.log("No products found in localStorage.");
+  }
+}
+
+const handleItemClick = (element) => {
+  if (selectedItem.value && selectedItem.value !== element) {
+    const currentIndex = products.value.indexOf(selectedItem.value);
+    const clickedIndex = products.value.indexOf(element);
+
+    swapItems(currentIndex, clickedIndex);
     selectedItem.value = null;
   } else {
+    selectedItem.value = element;
+  }
+};
+
+const swapItems = (indexA, indexB) => {
+  const temp = products.value[indexA];
+  products.value[indexA] = products.value[indexB];
+  products.value[indexB] = temp;
+  localStorage.setItem("products", JSON.stringify(products.value));
+};
+
+const handleIconClick = async (element) => {
+  if (showControlForItem.value === element) {
+    showControlForItem.value = null;
+    selectedItem.value = null;
+  } else {
+    showControlForItem.value = element;
     selectedItem.value = element;
     newIndex.value = 1;
 
@@ -91,30 +170,28 @@ const handleClick = async (element) => {
   }
 };
 
-const moveToIndex = async () => {
+const moveToIndex = () => {
   if (selectedItem.value && newIndex.value !== null) {
-    const currentIndex = skills.value.indexOf(selectedItem.value);
+    const currentIndex = products.value.indexOf(selectedItem.value);
     const targetIndex = newIndex.value - 1;
 
-    if (targetIndex >= 0 && targetIndex < skills.value.length) {
-      skills.value.splice(currentIndex, 1);
-      skills.value.splice(targetIndex, 0, selectedItem.value);
+    if (targetIndex >= 0 && targetIndex < products.value.length) {
+      products.value.splice(currentIndex, 1);
+      products.value.splice(targetIndex, 0, selectedItem.value);
     }
+    showControlForItem.value = null;
     selectedItem.value = null;
     newIndex.value = 1;
-
-    await nextTick();
-    if (newIndexInput.value) {
-      newIndexInput.value.focus();
-      newIndexInput.value.select();
-    }
   }
 };
 
 const deleteItem = (index) => {
+  console.log(index);
   if (index !== -1) {
-    skills.value.splice(index, 1);
-    if (selectedItem.value === skills.value[index]) {
+    products.value.splice(index, 1);
+    localStorage.setItem("products", JSON.stringify(products.value));
+
+    if (selectedItem.value === products.value[index]) {
       selectedItem.value = null;
       newIndex.value = 1;
     }
@@ -127,37 +204,66 @@ const addItem = () => {
     return;
   }
 
-  const itemExists = skills.value.some(
-    (skill) => skill.name.toLowerCase() === newItemName.value.toLowerCase()
+  const itemExists = products.value.some(
+    (product) => product.name.toLowerCase() === newItemName.value.toLowerCase()
   );
 
   if (itemExists) {
     alert("This item already exists in the list.");
     return;
   }
+
   const newItem = {
     id: Date.now(),
     name: newItemName.value,
   };
 
-  console.log(newItem);
-
-  skills.value.push(newItem);
+  products.value.push(newItem);
   newItemName.value = "";
-
-  localStorage.setItem("skills", JSON.stringify(skills.value));
+  localStorage.setItem("products", JSON.stringify(products.value));
 };
 
 const clearSelection = () => {
+  showControlForItem.value = null;
   selectedItem.value = null;
 };
 
-const onEnd = () => {
-  console.log("Drag operation completed");
+const loadMoreSkills = () => {
+  loading.value = true;
+
+  setTimeout(() => {
+    for (let i = 0; i < 5; i++) {
+      products.value.push({
+        id: Date.now() + i,
+        name: `Skill ${products.value.length + 1}`,
+      });
+    }
+    loading.value = false;
+  }, 1000);
 };
 </script>
 
 <style scoped>
+#icon {
+  width: 40px;
+  height: 40px;
+}
+#btn-box {
+  padding-bottom: 10px;
+}
+
+.item img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.dark-btn-box {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 10px;
+}
+
 .item {
   display: flex;
   align-items: center;
@@ -183,12 +289,23 @@ input {
   padding: 5px;
 }
 
-button {
-  margin-left: 5px;
-}
-
 .ghost {
   background-color: rgb(216, 216, 216);
   opacity: 0.5;
+}
+
+.btn {
+  flex: 1;
+  max-width: 120px;
+}
+
+.dark {
+  background-color: black;
+  color: white;
+  left: 0;
+}
+
+.light {
+  background-color: rgb(255, 255, 255);
 }
 </style>

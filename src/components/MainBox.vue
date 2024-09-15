@@ -1,15 +1,27 @@
 <template>
   <section class="hero">
-    <div class="left bar">Playlists</div>
+    <div class="left bar"></div>
     <div class="main bar">
-      <list-box></list-box>
+      <component :is="currentComponent"></component>
     </div>
-    <div class="right bar">Content Details</div>
+    <div class="right bar"></div>
   </section>
 </template>
 
 <script setup>
 import ListBox from "./ListBox.vue";
+
+import { computed } from "vue";
+
+const props = defineProps({
+  activeTab: String,
+});
+const componentsMap = {
+  Home: ListBox,
+};
+const currentComponent = computed(
+  () => componentsMap[props.activeTab] || ListBox
+);
 </script>
 
 <style scoped>
