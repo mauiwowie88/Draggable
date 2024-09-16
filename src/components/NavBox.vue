@@ -1,23 +1,13 @@
 <template>
   <nav>
     <div class="menu-box">
-      <!-- Hamburger button -->
       <button class="nav-btn" @click="toggleMenu" id="hamburger">
         <img src="/images/menu.png" alt="Menu drop down icon." id="icon" />
       </button>
       <img src="/images/logo.png" alt="Logo image." id="logo" />
     </div>
 
-    <!-- Dropdown Menu for small screens -->
-    <div v-if="isMenuOpen" id="dropdown-menu">
-      <button v-for="item in icons" :key="item.name" class="nav-btn">
-        <img :src="item.icon" :alt="`${item.name} icon`" class="nav-icon" />
-        {{ item.name }}
-      </button>
-    </div>
-
-    <!-- Tabs for large screens -->
-    <div id="tabs">
+    <div :id="isMenuOpen ? 'dropdown-menu' : 'tabs'">
       <button
         v-for="item in icons"
         :key="item.name"
@@ -25,7 +15,7 @@
         @click="selectTab(item.name)"
       >
         <img :src="item.icon" :alt="`${item.name} icon`" class="nav-icon" />
-        {{ item.name }}
+        <p class="item-name">{{ item.name }}</p>
       </button>
     </div>
 
@@ -40,7 +30,7 @@
 <script setup>
 import { ref } from "vue";
 import { icons } from "../assets/db";
-const emit = defineEmits(["changeTab"]); // We define "changeTab" as an event we can emit
+const emit = defineEmits(["changeTab"]);
 
 const isMenuOpen = ref(false);
 
@@ -54,6 +44,9 @@ const selectTab = (tab) => {
 </script>
 
 <style scoped>
+.item-name {
+  margin: 4px 0;
+}
 nav {
   display: flex;
   justify-content: space-between;
@@ -92,8 +85,8 @@ nav {
 }
 
 #icon {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
 }
 
 #dropdown-menu {

@@ -12,18 +12,15 @@
 .responsive-container {
   display: flex;
   flex-wrap: wrap;
-  padding: 10px 2vw;
+  padding: 10px;
   background-color: rgb(38, 41, 40);
-  box-sizing: border-box;
-  margin: 10px 0;
+  gap: 10px;
 }
 
 .box-item {
   flex: 1 1 30%;
-  min-width: 250px;
+  min-width: 220px;
   height: 100px;
   background-color: rgba(135, 206, 235, 0.6);
-  margin: 10px;
-  text-align: center;
 }
 </style>

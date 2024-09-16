@@ -2,7 +2,6 @@
   <div id="app">
     <nav-box @changeTab="changeTab"></nav-box>
     <main-box :activeTab="activeTab"></main-box>
-    <app-footer></app-footer>
   </div>
 </template>
 
@@ -10,7 +9,6 @@
 import { ref } from "vue";
 import NavBox from "./components/NavBox.vue";
 import MainBox from "./components/MainBox.vue";
-import AppFooter from "./components/FooterBox.vue";
 
 const activeTab = ref("Home");
 

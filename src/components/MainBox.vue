@@ -10,7 +10,7 @@
 
 <script setup>
 import ListBox from "./ListBox.vue";
-
+import SettingsBox from "./SettingsBox.vue";
 import { computed } from "vue";
 
 const props = defineProps({
@@ -18,6 +18,7 @@ const props = defineProps({
 });
 const componentsMap = {
   Home: ListBox,
+  Settings: SettingsBox,
 };
 const currentComponent = computed(
   () => componentsMap[props.activeTab] || ListBox
@@ -33,6 +34,5 @@ const currentComponent = computed(
 .bar {
   border: 1px solid #ccc;
   padding: 10px;
-  height: 100vh;
 }
 </style>

@@ -186,7 +186,6 @@ const moveToIndex = () => {
 };
 
 const deleteItem = (index) => {
-  console.log(index);
   if (index !== -1) {
     products.value.splice(index, 1);
     localStorage.setItem("products", JSON.stringify(products.value));
