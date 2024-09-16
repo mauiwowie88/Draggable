@@ -6,7 +6,7 @@
 
 <style scoped>
 #container {
-  background-color: brown;
+  background-color: rgb(175, 178, 191);
   padding-block: 10px;
 }
 

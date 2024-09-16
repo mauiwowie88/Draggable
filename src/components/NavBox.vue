@@ -20,7 +20,7 @@
     </div>
 
     <div class="notis-box">
-      <button class="nav-btn">
+      <button class="nav-btn notis">
         <img src="/images/bell.png" alt="Notifications Bell Icon." id="icon" />
       </button>
     </div>
@@ -30,8 +30,8 @@
 <script setup>
 import { ref } from "vue";
 import { icons } from "../assets/db";
-const emit = defineEmits(["changeTab"]);
 
+const emit = defineEmits(["changeTab"]);
 const isMenuOpen = ref(false);
 
 const toggleMenu = () => {
@@ -51,17 +51,19 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
 }
 
 .nav-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
+  justify-content: center;
+  padding: 6px;
   cursor: pointer;
   border: none;
   background-color: white;
+  min-width: 56px;
+  height: 52px;
 }
 
 .nav-icon {
@@ -80,8 +82,12 @@ nav {
 }
 
 #logo {
+  margin-left: 10px;
   width: 100px;
   height: 60px;
+}
+.notis {
+  padding: 8px;
 }
 
 #icon {
@@ -98,17 +104,18 @@ nav {
   box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
   border-radius: 4px;
 }
+#tabs {
+  display: flex;
+  justify-content: center;
+  padding: 6px 0;
+  gap: 2px;
+}
 
 .nav-btn:hover {
   background-color: rgba(195, 196, 196, 0.318);
 }
 
 @media (min-width: 768px) {
-  #tabs {
-    display: flex;
-    justify-content: center;
-  }
-
   #hamburger {
     display: none;
   }

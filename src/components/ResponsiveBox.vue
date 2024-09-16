@@ -1,12 +1,21 @@
 <template>
   <div class="responsive-container">
-    <div v-for="(_, index) in $slots.default()" :key="index" class="box-item">
-      <slot :index="index"></slot>
-    </div>
+    <!-- Loop through the number passed from the parent and create divs -->
+    <div v-for="n in numberOfDivs" :key="n" class="box-item"></div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import { defineProps } from "vue";
+
+// Accept the number of divs as a prop
+defineProps({
+  numberOfDivs: {
+    type: Number,
+    required: true,
+  },
+});
+</script>
 
 <style scoped>
 .responsive-container {

@@ -1,8 +1,6 @@
 <template>
-  <div id="app">
-    <nav-box @changeTab="changeTab"></nav-box>
-    <main-box :activeTab="activeTab"></main-box>
-  </div>
+  <nav-box @changeTab="changeTab"></nav-box>
+  <main-box :activeTab="activeTab"></main-box>
 </template>
 
 <script setup>
@@ -17,12 +15,4 @@ const changeTab = (newTab) => {
 };
 </script>
 
-<style scoped>
-body {
-  margin: 0;
-}
-#hero {
-  display: grid;
-  grid-template-columns: 3fr 6fr 3fr;
-}
-</style>
+<style scoped></style>

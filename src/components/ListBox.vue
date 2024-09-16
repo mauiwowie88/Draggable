@@ -2,18 +2,35 @@
   <section>
     <el-row id="btn-box">
       <el-col :span="16">
-        <el-button
-          size="large"
-          round
-          class="light btn"
-          @click="fetchProducts('https://fakestoreapi.com/products')"
-        >
-          Active
-        </el-button>
+        <el-dropdown>
+          <el-button size="large" round class="light btn">
+            Active
+            <el-icon class="el-icon--right">
+              <arrow-down />
+            </el-icon>
+          </el-button>
+          <span>Dropdown List</span>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item
+                v-for="(product, index) in products"
+                :key="index"
+              >
+                {{ product.name }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+
         <el-button size="large" round class="light btn">Inactive</el-button>
       </el-col>
       <el-col :span="8" class="dark-btn-box">
-        <el-button size="large" round class="dark btn">
+        <el-button
+          size="large"
+          round
+          class="dark btn"
+          @click="fetchProducts('https://fakestoreapi.com/products')"
+        >
           Create playlist
         </el-button>
       </el-col>
@@ -88,8 +105,9 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from "vue";
+import { ref, watch, nextTick, onMounted } from "vue";
 import draggable from "vuedraggable";
+import { ArrowDown } from "@element-plus/icons-vue";
 
 const products = ref([]);
 const selectedItem = ref(null);
@@ -240,6 +258,9 @@ const loadMoreSkills = () => {
     loading.value = false;
   }, 1000);
 };
+onMounted(() => {
+  loadProductsFromLocalStorage();
+});
 </script>
 
 <style scoped>
