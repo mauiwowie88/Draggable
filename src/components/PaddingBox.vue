@@ -6,8 +6,9 @@
 
 <style scoped>
 #container {
-  background-color: rgb(175, 178, 191);
-  padding-block: 10px;
+  background-color: #ece6fe;
+  padding-top: 24px;
+  /* height: 100vh; */
 }
 
 /* Media query for small screens (up to 768px) */

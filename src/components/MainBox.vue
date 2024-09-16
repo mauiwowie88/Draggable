@@ -4,9 +4,9 @@
       <div class="menu">
         <h3>Playlists</h3>
         <ul>
-          <li>Channel 1</li>
-          <li>Channel 2</li>
-          <li>Channel 3</li>
+          <li>Playlist 1</li>
+          <li>Playlist 2</li>
+          <li>Playlist 3</li>
         </ul>
       </div>
     </div>
@@ -69,6 +69,6 @@ const currentComponent = computed(
 
 .main.box {
   width: 70%;
-  padding: 20px;
+  padding: 24px 16px;
 }
 </style>
