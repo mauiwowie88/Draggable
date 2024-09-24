@@ -1,19 +1,12 @@
 <template>
-  <!-- <nav-box @changeTab="changeTab"></nav-box>
-  <main-box :activeTab="activeTab"></main-box> -->
-  <tes-ter></tes-ter>
+  <padding-box>
+    <list-box></list-box>
+  </padding-box>
 </template>
 
 <script setup>
-// import { ref } from "vue";
-// import NavBox from "./components/NavBox.vue";
-// import MainBox from "./components/MainBox.vue";
-import TesTer from "./components/TesTer.vue";
-// const activeTab = ref("Home");
-
-// const changeTab = (newTab) => {
-//   activeTab.value = newTab;
-// };
+import PaddingBox from "./components/PaddingBox.vue";
+import ListBox from "./components/ListBox.vue";
 </script>
 
 <style scoped></style>

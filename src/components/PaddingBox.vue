@@ -1,14 +1,14 @@
 <template>
-  <div id="container"><slot></slot></div>
+  <div id="container">
+    <slot></slot>
+  </div>
 </template>
 
 <script setup></script>
-
 <style scoped>
 #container {
-  background-color: #ece6fe;
   padding-top: 24px;
-  /* height: 100vh; */
+  background-color: #ece6fe;
 }
 
 /* Media query for small screens (up to 768px) */
