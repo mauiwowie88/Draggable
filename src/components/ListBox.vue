@@ -1,7 +1,13 @@
 <template>
   <div class="list-box">
-    <el-button round @click="addItem" class="btn">Add Item</el-button>
-    <el-button round @click="deleteItems" class="btn">Delete Items</el-button>
+    <div class="btns">
+      <el-button round @click="addItem" class="btn">Add Item</el-button>
+
+      <button @click="deleteItems" class="icon-btn">
+        <img src="../images/delete.png" alt="" class="icon" />
+      </button>
+    </div>
+
     <section v-if="items.length">
       <draggable
         v-model="items"
@@ -112,10 +118,25 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.icon {
+  width: 24px;
+}
+.icon-btn {
+  border: none;
+  align-self: center;
+  background-color: transparent;
+  padding: 0 5px;
+  display: flex;
+  cursor: pointer;
+}
 .list-box {
   background-color: white;
   height: 100vh;
   padding: 1px;
+}
+
+.btns {
+  display: flex;
 }
 
 .list {
