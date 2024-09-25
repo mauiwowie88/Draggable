@@ -14,10 +14,14 @@
 <script setup>
 import MainContent from "./MainContent.vue";
 import { selectedIndex } from "../utils/store.js";
+import { onMounted } from "vue";
 
 defineProps({
   item: Object,
   index: Number,
+});
+onMounted(() => {
+  selectedIndex.value = null;
 });
 </script>
 

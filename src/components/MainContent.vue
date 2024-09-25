@@ -9,13 +9,16 @@
     </div>
 
     <div class="action-container">
-      <button @click.stop="toggleDeletePopup" class="delete-btn">
+      <button
+        @click.stop="toggleDeletePopup(showDeletePopup)"
+        class="delete-btn"
+      >
         <img src="/src/images/icon-delete.svg" class="delete-icon" alt />
       </button>
 
       <div v-if="showDeletePopup" class="delete-popup">
         <span>Delete?</span>
-        <button @click="deleteItem(props.index)" class="confirm-btn">
+        <button @click.stop="deleteItem(props.index)" class="confirm-btn">
           Confirm
         </button>
       </div>
@@ -24,29 +27,36 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
+import { ref } from "vue";
 import { deleteItem } from "@/utils/storageHelpers";
 import { selectedIndex } from "@/utils/store";
-
 import DropDown from "./DropDown.vue";
+
 const showDeletePopup = ref(false);
 const props = defineProps({
   item: Object,
   index: Number,
 });
 
-const toggleDeletePopup = () => {
-  if (showDeletePopup.value) {
-    selectedIndex.value = null;
-  } else {
-    selectedIndex.value = props.index;
+const handleClickOutside = (event) => {
+  const popupElement = document.querySelector(".delete-popup");
+  if (popupElement && !popupElement.contains(event.target)) {
+    showDeletePopup.value = false;
+    document.removeEventListener("click", handleClickOutside);
   }
 };
-watch(selectedIndex, (newIndex) => {
-  showDeletePopup.value = newIndex === props.index;
-});
 
-onMounted(() => {});
+const toggleDeletePopup = () => {
+  showDeletePopup.value = !showDeletePopup.value;
+  if (showDeletePopup.value) {
+    selectedIndex.value = null;
+    document.addEventListener("click", handleClickOutside);
+    console.log("waiting");
+  } else {
+    document.removeEventListener("click", handleClickOutside);
+    console.log("clicked");
+  }
+};
 </script>
 
 <style scoped>

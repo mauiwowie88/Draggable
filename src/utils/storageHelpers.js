@@ -1,4 +1,4 @@
-import { items, count } from "../utils/store.js";
+import { items, count, selectedIndex } from "../utils/store.js";
 
 export const addItem = () => {
   const list = JSON.parse(localStorage.getItem("items")) || [];
@@ -11,15 +11,16 @@ export const addItem = () => {
   items.value = list;
 };
 export const getItems = () => {
-  const list = JSON.parse(localStorage.getItem("items")) || []; // Ensure it's an array
-  const index = JSON.parse(localStorage.getItem("count")) || 1; // Default count to 1
-
+  const list = JSON.parse(localStorage.getItem("items")) || [];
+  const index = JSON.parse(localStorage.getItem("count")) || 1;
+  console.log(list);
   items.value = list.map((item, idx) => ({
     ...item,
     id: item.id || idx + 1,
   }));
 
   count.value = index;
+  selectedIndex.value = null;
 };
 
 export const deleteItem = (index) => {
@@ -34,5 +35,4 @@ export const deleteItems = () => {
   localStorage.removeItem("count");
   items.value = [];
   count.value = 1;
-  console.log("All items deleted");
 };
