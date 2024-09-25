@@ -1,12 +1,6 @@
 <template>
   <div class="list-box">
-    <div class="btns">
-      <el-button round @click="addItem" class="btn">Add Item</el-button>
-
-      <button @click="deleteItems" class="icon-btn">
-        <img src="../images/delete.png" alt="" class="icon" />
-      </button>
-    </div>
+    <AddItem />
 
     <section v-if="items.length">
       <draggable
@@ -18,11 +12,9 @@
       >
         <template #item="{ element, index }">
           <list-item
-            :key="index"
+            :key="element.id"
             :item="element"
             :index="index"
-            :selectedIndex="selectedIndex"
-            :class="{ selected: selectedIndex === index }"
             @click="handleItemClick(index)"
           />
         </template>
@@ -34,83 +26,18 @@
 </template>
 
 <script setup>
-import { ref, provide, onMounted } from "vue";
+import { onMounted } from "vue";
+import { items } from "../utils/store.js";
+import { getItems } from "../utils/storageHelpers";
+
+import {
+  handleItemClick,
+  handleDragStart,
+  handleDragEnd,
+} from "../utils/itemHelpers";
 import draggable from "vuedraggable";
 import ListItem from "./ListItem.vue";
-
-let count = ref(1);
-const items = ref([]);
-const selectedIndex = ref(null);
-
-const addItem = () => {
-  const list = JSON.parse(localStorage.getItem("items")) || [];
-
-  list.push({ id: count.value });
-
-  count.value++;
-  localStorage.setItem("count", JSON.stringify(count.value));
-  localStorage.setItem("items", JSON.stringify(list));
-  items.value = list;
-};
-const getItems = () => {
-  const list = JSON.parse(localStorage.getItem("items"));
-  const index = JSON.parse(localStorage.getItem("count"));
-
-  if (list) {
-    items.value = list.map((item, idx) => ({
-      ...item,
-      id: item.id || idx + 1,
-    }));
-  }
-
-  if (index) count.value = index;
-};
-
-const deleteItem = (index) => {
-  const list = JSON.parse(localStorage.getItem("items")) || [];
-  list.splice(index, 1);
-  localStorage.setItem("items", JSON.stringify(list));
-  items.value = list;
-};
-
-const deleteItems = () => {
-  localStorage.removeItem("items");
-  localStorage.removeItem("count");
-  items.value = [];
-  count.value = 1;
-  console.log("All items deleted");
-};
-
-const handleItemClick = (index) => {
-  if (selectedIndex.value === index) {
-    selectedIndex.value = null;
-  } else if (selectedIndex.value !== null && selectedIndex.value !== index) {
-    console.log(index);
-    swap(selectedIndex.value, index);
-    selectedIndex.value = null;
-  } else {
-    selectedIndex.value = index;
-  }
-};
-
-const swap = (indexA, indexB) => {
-  const temp = items.value[indexA];
-  items.value[indexA] = items.value[indexB];
-  items.value[indexB] = temp;
-  localStorage.setItem("items", JSON.stringify(items.value));
-};
-
-const handleDragStart = (event) => {
-  selectedIndex.value = event.oldIndex;
-};
-
-const handleDragEnd = () => {
-  selectedIndex.value = null;
-};
-
-provide("items", items);
-provide("count", count);
-provide("delete", deleteItem);
+import AddItem from "./AddItem.vue";
 
 onMounted(() => {
   getItems();
@@ -153,8 +80,5 @@ ul {
   background-color: black;
   color: white;
   border: none;
-}
-.selected {
-  background-color: #e7e7e7b8;
 }
 </style>

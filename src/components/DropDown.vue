@@ -1,26 +1,25 @@
 <template>
   <div class="box">
     <input class="input-box" :placeholder="index + 1" />
-    <select v-model="selectedIndex" @change="swapItems" class="dropdown">
-      <option v-for="(item, idx) in items" :key="idx">
-        <span>
-          {{ idx + 1 }}
-        </span>
+    <select
+      class="dropdown"
+      @click.stop
+      @change="moveTo(index, Number($event.target.value))"
+    >
+      <option v-for="(item, idx) in items" :key="idx" :value="idx">
+        {{ idx + 1 }}
       </option>
     </select>
   </div>
 </template>
 
 <script setup>
-import { ref, inject } from "vue";
+import { items } from "@/utils/store";
+import { moveTo } from "@/utils/itemHelpers";
 
-const props = defineProps({
-  item: Object,
+defineProps({
   index: Number,
 });
-
-const items = inject("items");
-const selectedIndex = ref(props.index);
 </script>
 
 <style scoped>

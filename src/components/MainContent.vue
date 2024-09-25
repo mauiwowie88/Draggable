@@ -9,7 +9,7 @@
     </div>
 
     <div class="action-container">
-      <button @click="toggleDeletePopup" class="delete-btn">
+      <button @click.stop="toggleDeletePopup" class="delete-btn">
         <img src="/src/images/icon-delete.svg" class="delete-icon" alt />
       </button>
 
@@ -22,23 +22,20 @@
 </template>
 
 <script setup>
-import { ref, inject, onUnmounted } from "vue";
+import { ref, onUnmounted } from "vue";
+import { deleteItem } from "@/utils/storageHelpers";
+
 import DropDown from "./DropDown.vue";
 
-// Props
 const props = defineProps({
   item: Object,
   index: Number,
-  selectedIndex: Number,
 });
-
-const deleteItem = inject("delete");
 
 const showDeletePopup = ref(false);
 
 const toggleDeletePopup = async () => {
   showDeletePopup.value = !showDeletePopup.value;
-  console.log(props.item);
 };
 
 const deleteOnClick = () => {
@@ -46,9 +43,7 @@ const deleteOnClick = () => {
   showDeletePopup.value = false;
 };
 
-onUnmounted(() => {
-  document.removeEventListener("click", deleteOnClick);
-});
+onUnmounted(() => {});
 </script>
 
 <style scoped>
