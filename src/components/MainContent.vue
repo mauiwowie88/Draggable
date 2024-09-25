@@ -15,35 +15,38 @@
 
       <div v-if="showDeletePopup" class="delete-popup">
         <span>Delete?</span>
-        <button @click="deleteOnClick" class="confirm-btn">Confirm</button>
+        <button @click="deleteItem(props.index)" class="confirm-btn">
+          Confirm
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onUnmounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { deleteItem } from "@/utils/storageHelpers";
+import { selectedIndex } from "@/utils/store";
 
 import DropDown from "./DropDown.vue";
-
+const showDeletePopup = ref(false);
 const props = defineProps({
   item: Object,
   index: Number,
 });
 
-const showDeletePopup = ref(false);
-
-const toggleDeletePopup = async () => {
-  showDeletePopup.value = !showDeletePopup.value;
+const toggleDeletePopup = () => {
+  if (showDeletePopup.value) {
+    selectedIndex.value = null;
+  } else {
+    selectedIndex.value = props.index;
+  }
 };
+watch(selectedIndex, (newIndex) => {
+  showDeletePopup.value = newIndex === props.index;
+});
 
-const deleteOnClick = () => {
-  deleteItem(props.index);
-  showDeletePopup.value = false;
-};
-
-onUnmounted(() => {});
+onMounted(() => {});
 </script>
 
 <style scoped>

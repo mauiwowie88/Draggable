@@ -29,7 +29,6 @@
 import { onMounted } from "vue";
 import { items } from "../utils/store.js";
 import { getItems } from "../utils/storageHelpers";
-
 import {
   handleItemClick,
   handleDragStart,
