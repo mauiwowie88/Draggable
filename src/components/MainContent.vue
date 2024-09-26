@@ -9,52 +9,48 @@
     </div>
 
     <div class="action-container">
-      <button
-        @click.stop="toggleDeletePopup(showDeletePopup)"
-        class="delete-btn"
-      >
+      <button @click.stop="toggleDeletePopup(index)" class="delete-btn">
         <img src="/src/images/icon-delete.svg" class="delete-icon" alt />
       </button>
 
-      <div v-if="showDeletePopup" class="delete-popup">
+      <div v-if="popupIdx === index" class="delete-popup">
         <span>Delete?</span>
-        <button @click.stop="deleteItem(props.index)" class="confirm-btn">
-          Confirm
-        </button>
+        <button @click="deleteItem(index)" class="confirm-btn">Confirm</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { deleteItem } from "@/utils/storageHelpers";
-import { selectedIndex } from "@/utils/store";
+import { popup, popupIdx, selectedIndex } from "@/utils/store";
 import DropDown from "./DropDown.vue";
 
-const showDeletePopup = ref(false);
-const props = defineProps({
+defineProps({
   item: Object,
   index: Number,
 });
 
-const handleClickOutside = (event) => {
-  const popupElement = document.querySelector(".delete-popup");
-  if (popupElement && !popupElement.contains(event.target)) {
-    showDeletePopup.value = false;
+const toggleDeletePopup = (currentIndex) => {
+  console.log("toggled");
+  if (popup.value) {
+    popup.value = false;
+    popupIdx.value = null;
     document.removeEventListener("click", handleClickOutside);
+  } else {
+    popup.value = true;
+    popupIdx.value = currentIndex;
+    document.addEventListener("click", handleClickOutside);
   }
 };
 
-const toggleDeletePopup = () => {
-  showDeletePopup.value = !showDeletePopup.value;
-  if (showDeletePopup.value) {
+const handleClickOutside = (event) => {
+  const popupElement = document.querySelector(".confirm-btn");
+  if (popupElement && !popupElement.contains(event.target)) {
+    popupIdx.value = null;
+    popup.value = false;
     selectedIndex.value = null;
-    document.addEventListener("click", handleClickOutside);
-    console.log("waiting");
-  } else {
     document.removeEventListener("click", handleClickOutside);
-    console.log("clicked");
   }
 };
 </script>
@@ -105,7 +101,6 @@ const toggleDeletePopup = () => {
   position: relative;
 }
 
-/* Popup styling */
 .delete-popup {
   position: absolute;
   top: 100%;

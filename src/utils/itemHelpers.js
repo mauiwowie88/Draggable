@@ -1,6 +1,7 @@
 import { items, selectedIndex } from "../utils/store.js";
 
 export const handleItemClick = (index) => {
+  console.log("clicked");
   if (selectedIndex.value === index) {
     selectedIndex.value = null;
   } else if (selectedIndex.value !== null && selectedIndex.value !== index) {
