@@ -1,13 +1,17 @@
 <template>
   <div class="box">
-    <input class="input-box" :placeholder="index + 1" />
+    <input
+      class="input-box"
+      :placeholder="index + 1"
+      @click.stop="true"
+      @keyup.enter="moveToInput(index, $event.target.value)"
+    />
     <select
       class="dropdown"
       @click.stop
       @change="moveTo(index, Number($event.target.value))"
       :value="index"
     >
-      <option disabled selected value=""></option>
       <option v-for="(item, idx) in items" :key="idx" :value="idx">
         {{ idx + 1 }}
       </option>
@@ -17,7 +21,7 @@
 
 <script setup>
 import { items } from "@/utils/store";
-import { moveTo } from "@/utils/itemHelpers";
+import { moveTo, moveToInput } from "@/utils/itemHelpers";
 
 defineProps({
   index: Number,
