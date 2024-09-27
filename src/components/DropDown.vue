@@ -5,7 +5,9 @@
       class="dropdown"
       @click.stop
       @change="moveTo(index, Number($event.target.value))"
+      :value="index"
     >
+      <option disabled selected value=""></option>
       <option v-for="(item, idx) in items" :key="idx" :value="idx">
         {{ idx + 1 }}
       </option>
@@ -53,7 +55,7 @@ defineProps({
 }
 
 .input-box:focus {
-  outline: none; /* Removes the default focus outline */
-  border: none; /* Ensures no border on focus */
+  outline: none;
+  border: none;
 }
 </style>

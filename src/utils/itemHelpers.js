@@ -1,35 +1,33 @@
-import { items, selectedIndex } from "../utils/store.js";
+import {
+  items,
+  selectedIndex,
+  popupState,
+  popupIndex,
+} from "../utils/store.js";
 
 export const handleItemClick = (index) => {
-  console.log("clicked");
+  if (popupState.value) return;
+
   if (selectedIndex.value === index) {
     selectedIndex.value = null;
   } else if (selectedIndex.value !== null && selectedIndex.value !== index) {
     swap(selectedIndex.value, index);
+
     selectedIndex.value = null;
   } else {
     selectedIndex.value = index;
   }
 };
 
-export const moveTo = (index, next) => {
-  const item = items.value[index];
-  if (!item) {
-    console.error("Item not found at index", index);
-    return;
-  }
-
-  items.value.splice(index, 1);
-  items.value.splice(next, 0, item);
-
-  localStorage.setItem("items", JSON.stringify(items.value));
+export const moveTo = (currentIndex, newIndex) => {
+  const itemToMove = items.value.splice(currentIndex, 1)[0];
+  items.value.splice(newIndex, 0, itemToMove);
 };
 
 export const swap = (indexA, indexB) => {
   const temp = items.value[indexA];
   items.value[indexA] = items.value[indexB];
   items.value[indexB] = temp;
-  localStorage.setItem("items", JSON.stringify(items.value));
 };
 
 export const handleDragStart = (event) => {
@@ -38,4 +36,26 @@ export const handleDragStart = (event) => {
 
 export const handleDragEnd = () => {
   selectedIndex.value = null;
+};
+
+export const toggleDeletePopup = (currentIndex) => {
+  if (popupState.value) {
+    popupState.value = false;
+    popupIndex.value = null;
+    document.removeEventListener("click", handleClickOutside);
+  } else {
+    popupState.value = true;
+    popupIndex.value = currentIndex;
+    document.addEventListener("click", handleClickOutside);
+  }
+};
+
+export const handleClickOutside = (event) => {
+  const popupElement = document.querySelector(".confirm-btn");
+  if (popupElement && !popupElement.contains(event.target)) {
+    popupIndex.value = null;
+    popupState.value = false;
+    selectedIndex.value = null;
+    document.removeEventListener("click", handleClickOutside);
+  }
 };

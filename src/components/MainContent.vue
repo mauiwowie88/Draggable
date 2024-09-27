@@ -10,12 +10,14 @@
 
     <div class="action-container">
       <button @click.stop="toggleDeletePopup(index)" class="delete-btn">
-        <img src="/src/images/icon-delete.svg" class="delete-icon" alt />
+        <img src="/src/images/icon-delete.svg" class="delete-icon" alt="" />
       </button>
 
-      <div v-if="popupIdx === index" class="delete-popup">
+      <div v-if="popupIndex === index" class="delete-popup">
         <span>Delete?</span>
-        <button @click="deleteItem(index)" class="confirm-btn">Confirm</button>
+        <button @click.stop="deleteItem(index)" class="confirm-btn">
+          Confirm
+        </button>
       </div>
     </div>
   </div>
@@ -23,36 +25,15 @@
 
 <script setup>
 import { deleteItem } from "@/utils/storageHelpers";
-import { popup, popupIdx, selectedIndex } from "@/utils/store";
+import { popupIndex } from "../utils/store.js";
+
+import { toggleDeletePopup } from "@/utils/itemHelpers";
 import DropDown from "./DropDown.vue";
 
 defineProps({
   item: Object,
   index: Number,
 });
-
-const toggleDeletePopup = (currentIndex) => {
-  console.log("toggled");
-  if (popup.value) {
-    popup.value = false;
-    popupIdx.value = null;
-    document.removeEventListener("click", handleClickOutside);
-  } else {
-    popup.value = true;
-    popupIdx.value = currentIndex;
-    document.addEventListener("click", handleClickOutside);
-  }
-};
-
-const handleClickOutside = (event) => {
-  const popupElement = document.querySelector(".confirm-btn");
-  if (popupElement && !popupElement.contains(event.target)) {
-    popupIdx.value = null;
-    popup.value = false;
-    selectedIndex.value = null;
-    document.removeEventListener("click", handleClickOutside);
-  }
-};
 </script>
 
 <style scoped>

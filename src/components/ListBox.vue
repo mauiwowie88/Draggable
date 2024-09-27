@@ -26,9 +26,8 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
 import { items } from "../utils/store.js";
-import { getItems } from "../utils/storageHelpers";
+
 import {
   handleItemClick,
   handleDragStart,
@@ -37,10 +36,6 @@ import {
 import draggable from "vuedraggable";
 import ListItem from "./ListItem.vue";
 import AddItem from "./AddItem.vue";
-
-onMounted(() => {
-  getItems();
-});
 </script>
 
 <style scoped>
